@@ -2,15 +2,14 @@ package br.com.alura.challenge.literalura.main;
 
 import br.com.alura.challenge.literalura.model.AuthorDataClass;
 import br.com.alura.challenge.literalura.model.BookDataClass;
+import br.com.alura.challenge.literalura.model.LanguagesEnum;
 import br.com.alura.challenge.literalura.model.ResultsData;
 import br.com.alura.challenge.literalura.repository.BookRepository;
 import br.com.alura.challenge.literalura.service.ConsumeApi;
 import br.com.alura.challenge.literalura.service.DataConverter;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import java.util.Optional;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 public class Main {
     private BookRepository repository;
@@ -37,6 +36,7 @@ public class Main {
                     2 - Listar livros buscados;
                     3 - Listar autores;
                     4 - Buscar autores vivos em um ano;
+                    5 - Mostrar apenas os livros em português;
                     
                     0 - Sair;
                     """
@@ -56,6 +56,9 @@ public class Main {
                     break;
                 case 4:
                     showAliveAuthors();
+                    break;
+                case 5:
+                    showBooksInPt();
                     break;
                 case 0:
                     System.out.println("\nSaindo...\n");
@@ -105,14 +108,23 @@ public class Main {
         var userYear = scanner.nextInt();
         scanner.nextLine();
 
-        var searched = repository.findAliveAuthors(userYear);
+        var searched = repository.findByAuthorBirthYearLessThanEqualAndAuthorDeathYearGreaterThanEqual(userYear, userYear);
 
         if (searched.size() > 0) {
-            System.out.println("\nO(s) autor(es) vivo(s) nesse ano era(m):\n");
-            searched.forEach(System.out::println);
+            System.out.println("\nO(s) autor(es) vivo(s) nesse ano era(m):");
+            searched.forEach(a -> System.out.println(a.getAuthor()));
         } else {
             System.out.println("\nNenhum autor da nossa database estava vivo nesse ano!");
         }
 
+    }
+
+    private void showBooksInPt() {
+        LanguagesEnum languagesEnum = LanguagesEnum.fromString("pt");
+
+        var searched = repository.findByLanguages(languagesEnum);
+
+        System.out.println("\nEsses são todos os nossos " + searched.size() + " títulos em português:");
+        searched.forEach(System.out::println);
     }
 }
