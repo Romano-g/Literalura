@@ -77,18 +77,22 @@ public class Main {
         var userBookJson = consumeApi.getData(
                 URI + userBook.toLowerCase().replace(" ", "+"));
 
-        ResultsData resultsData = dataConverter.getData(userBookJson, ResultsData.class);
-
-        AuthorDataClass authorDataClass = new AuthorDataClass(resultsData);
-        BookDataClass userBookClass = new BookDataClass(resultsData);
-
         try {
-            authorDataClass.setBooks(userBookClass);
-            repository.save(userBookClass);
-            System.out.println("\n" + userBookClass);
-        } catch (DataIntegrityViolationException c) {
-            System.out.println("\n" + userBookClass);
+            ResultsData resultsData = dataConverter.getData(userBookJson, ResultsData.class);
+
+            AuthorDataClass authorDataClass = new AuthorDataClass(resultsData);
+            BookDataClass userBookClass = new BookDataClass(resultsData);
+            try {
+                authorDataClass.setBooks(userBookClass);
+                repository.save(userBookClass);
+                System.out.println("\n" + userBookClass);
+            } catch (DataIntegrityViolationException c) {
+                System.out.println("\n" + userBookClass);
+            }
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("\nO gutendex não reconhece este livro!");
         }
+
     }
 
     private void showSearchs() {

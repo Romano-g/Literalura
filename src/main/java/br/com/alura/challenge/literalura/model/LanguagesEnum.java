@@ -2,7 +2,8 @@ package br.com.alura.challenge.literalura.model;
 
 public enum LanguagesEnum {
     Inglês("en"),
-    Português("pt");
+    Português("pt"),
+    Espanhol("es");
 
     private String languageGutendex;
 
